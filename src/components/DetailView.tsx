@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetails } from '../services/api';
 import { Pokemon } from '../types/pokemon';
 import styles from '../styles/DetailView.module.css';
+
 
 const DetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,7 +13,11 @@ const DetailView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  const pokemonList = location.state?.pokemons || [];
+  // Wrap pokemonList with useMemo to stabilize the reference
+  const pokemonList = useMemo(() => {
+    return location.state?.pokemons || [];
+  }, [location.state?.pokemons]);
+
 
   useEffect(() => {
     const loadPokemon = async () => {
@@ -37,12 +42,14 @@ const DetailView: React.FC = () => {
     loadPokemon();
   }, [id, pokemonList]);
 
+
   const handlePrevious = () => {
     if (pokemonList.length > 0 && currentIndex > 0) {
       const prevPokemon = pokemonList[currentIndex - 1];
       navigate(`/pokemon/${prevPokemon.id}`, { state: { pokemons: pokemonList } });
     }
   };
+
 
   const handleNext = () => {
     if (pokemonList.length > 0 && currentIndex < pokemonList.length - 1) {
@@ -51,9 +58,11 @@ const DetailView: React.FC = () => {
     }
   };
 
+
   if (loading || !pokemon) {
     return <div className={styles.loading}>Loading Pokémon Details...</div>;
   }
+
 
   return (
     <div className={styles.container}>
@@ -74,11 +83,13 @@ const DetailView: React.FC = () => {
         </button>
       </div>
 
+
       <div className={styles.content}>
         <div className={styles.header}>
           <h1>{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</h1>
           <span className={styles.id}>#{pokemon.id.toString().padStart(3, '0')}</span>
         </div>
+
 
         <div className={styles.mainInfo}>
           <div className={styles.imageSection}>
@@ -89,6 +100,7 @@ const DetailView: React.FC = () => {
             />
           </div>
 
+
           <div className={styles.detailsSection}>
             <div className={styles.types}>
               {pokemon.types.map((type, index) => (
@@ -97,6 +109,7 @@ const DetailView: React.FC = () => {
                 </span>
               ))}
             </div>
+
 
             <div className={styles.measurements}>
               <div className={styles.measurement}>
@@ -109,6 +122,7 @@ const DetailView: React.FC = () => {
               </div>
             </div>
 
+
             <div className={styles.abilities}>
               <h3>Abilities</h3>
               <div className={styles.abilityList}>
@@ -119,6 +133,7 @@ const DetailView: React.FC = () => {
                 ))}
               </div>
             </div>
+
 
             <div className={styles.stats}>
               <h3>Base Stats</h3>
@@ -143,5 +158,6 @@ const DetailView: React.FC = () => {
     </div>
   );
 };
+
 
 export default DetailView;
