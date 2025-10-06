@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAllPokemonDetails, fetchPokemonDetails } from '../services/api';
+import { fetchPokemonDetails } from '../services/api';
 import { Pokemon } from '../types/pokemon';
 import styles from '../styles/GalleryView.module.css';
 
@@ -15,9 +15,8 @@ const GalleryView: React.FC = () => {
     'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
   ]);
   const [loading, setLoading] = useState<boolean>(true);
-
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage] = useState<number>(72); 
+  const [itemsPerPage] = useState<number>(72);
 
   const generations = {
     'all': { name: 'All Generations', min: 1, max: 1025 },
@@ -36,29 +35,7 @@ const GalleryView: React.FC = () => {
     fetchPokemon();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-    setCurrentPage(1);
-  }, [selectedTypes, selectedGeneration, pokemonList]);
-
-  const fetchPokemon = async () => {
-    try {
-      const pokemonPromises = [];
-      for (let i = 1; i <= 1025; i++) {
-        pokemonPromises.push(fetchPokemonDetails(i));
-      }
-      
-      const detailedPokemon = await Promise.all(pokemonPromises);
-      setPokemonList(detailedPokemon);
-      setFilteredList(detailedPokemon);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching pokemon:', error);
-      setLoading(false);
-    }
-  };
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...pokemonList];
 
     if (selectedGeneration !== 'all') {
@@ -75,6 +52,28 @@ const GalleryView: React.FC = () => {
     }
 
     setFilteredList(filtered);
+  }, [pokemonList, selectedGeneration, selectedTypes]);
+
+  useEffect(() => {
+    applyFilters();
+    setCurrentPage(1);
+  }, [selectedTypes, selectedGeneration, pokemonList, applyFilters]);
+
+  const fetchPokemon = async () => {
+    try {
+      const pokemonPromises = [];
+      for (let i = 1; i <= 1025; i++) {
+        pokemonPromises.push(fetchPokemonDetails(i));
+      }
+      
+      const detailedPokemon = await Promise.all(pokemonPromises);
+      setPokemonList(detailedPokemon);
+      setFilteredList(detailedPokemon);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching pokemon:', error);
+      setLoading(false);
+    }
   };
 
   const toggleType = (type: string) => {
