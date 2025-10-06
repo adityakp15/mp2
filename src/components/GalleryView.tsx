@@ -4,6 +4,20 @@ import { fetchPokemonDetails } from '../services/api';
 import { Pokemon } from '../types/pokemon';
 import styles from '../styles/GalleryView.module.css';
 
+// Move generations outside component to avoid re-creation on every render
+const generations = {
+  'all': { name: 'All Generations', min: 1, max: 1025 },
+  'gen1': { name: 'Gen 1 (Kanto)', min: 1, max: 151 },
+  'gen2': { name: 'Gen 2 (Johto)', min: 152, max: 251 },
+  'gen3': { name: 'Gen 3 (Hoenn)', min: 252, max: 386 },
+  'gen4': { name: 'Gen 4 (Sinnoh)', min: 387, max: 493 },
+  'gen5': { name: 'Gen 5 (Unova)', min: 494, max: 649 },
+  'gen6': { name: 'Gen 6 (Kalos)', min: 650, max: 721 },
+  'gen7': { name: 'Gen 7 (Alola)', min: 722, max: 809 },
+  'gen8': { name: 'Gen 8 (Galar)', min: 810, max: 905 },
+  'gen9': { name: 'Gen 9 (Paldea)', min: 906, max: 1025 }
+};
+
 const GalleryView: React.FC = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [filteredList, setFilteredList] = useState<Pokemon[]>([]);
@@ -18,22 +32,26 @@ const GalleryView: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(72);
 
-  const generations = {
-    'all': { name: 'All Generations', min: 1, max: 1025 },
-    'gen1': { name: 'Gen 1 (Kanto)', min: 1, max: 151 },
-    'gen2': { name: 'Gen 2 (Johto)', min: 152, max: 251 },
-    'gen3': { name: 'Gen 3 (Hoenn)', min: 252, max: 386 },
-    'gen4': { name: 'Gen 4 (Sinnoh)', min: 387, max: 493 },
-    'gen5': { name: 'Gen 5 (Unova)', min: 494, max: 649 },
-    'gen6': { name: 'Gen 6 (Kalos)', min: 650, max: 721 },
-    'gen7': { name: 'Gen 7 (Alola)', min: 722, max: 809 },
-    'gen8': { name: 'Gen 8 (Galar)', min: 810, max: 905 },
-    'gen9': { name: 'Gen 9 (Paldea)', min: 906, max: 1025 }
-  };
+  const fetchPokemon = useCallback(async () => {
+    try {
+      const pokemonPromises = [];
+      for (let i = 1; i <= 1025; i++) {
+        pokemonPromises.push(fetchPokemonDetails(i));
+      }
+      
+      const detailedPokemon = await Promise.all(pokemonPromises);
+      setPokemonList(detailedPokemon);
+      setFilteredList(detailedPokemon);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching pokemon:', error);
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchPokemon();
-  }, []);
+  }, [fetchPokemon]);
 
   const applyFilters = useCallback(() => {
     let filtered = [...pokemonList];
@@ -57,24 +75,7 @@ const GalleryView: React.FC = () => {
   useEffect(() => {
     applyFilters();
     setCurrentPage(1);
-  }, [selectedTypes, selectedGeneration, pokemonList, applyFilters]);
-
-  const fetchPokemon = async () => {
-    try {
-      const pokemonPromises = [];
-      for (let i = 1; i <= 1025; i++) {
-        pokemonPromises.push(fetchPokemonDetails(i));
-      }
-      
-      const detailedPokemon = await Promise.all(pokemonPromises);
-      setPokemonList(detailedPokemon);
-      setFilteredList(detailedPokemon);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching pokemon:', error);
-      setLoading(false);
-    }
-  };
+  }, [applyFilters]);
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
@@ -152,7 +153,6 @@ const GalleryView: React.FC = () => {
       <h1>Pokédex Gallery</h1>
       
       <div className={styles.filtersContainer}>
-        {/* Generation Filter */}
         <div className={styles.generationFilter}>
           <h3>Filter by Generation:</h3>
           <select 
