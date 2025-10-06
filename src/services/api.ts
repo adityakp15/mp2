@@ -7,7 +7,7 @@ export const api = axios.create({
   baseURL: BASE_URL,
 });
 
-export const fetchPokemonList = async (limit: number = 151) => {
+export const fetchPokemonList = async (limit: number = 1025) => {
   const response = await api.get(`/pokemon?limit=${limit}`);
   const results = response.data.results.map((pokemon: any, index: number) => ({
     ...pokemon,
@@ -21,7 +21,7 @@ export const fetchPokemonDetails = async (id: number): Promise<Pokemon> => {
   return response.data;
 };
 
-export const fetchAllPokemonDetails = async (limit: number = 151) => {
+export const fetchAllPokemonDetails = async (limit: number = 1025) => {
   const list = await fetchPokemonList(limit);
   const promises = list.map((pokemon: any) => fetchPokemonDetails(pokemon.id));
   return Promise.all(promises);

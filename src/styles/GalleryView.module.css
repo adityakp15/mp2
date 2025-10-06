@@ -8,130 +8,223 @@
   text-align: center;
   color: #333;
   margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
 }
 
-.filters {
+.filtersContainer {
   margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.filters h3 {
+.generationFilter {
+  margin-bottom: 1.5rem;
+}
+
+.generationFilter h3 {
   margin-bottom: 1rem;
   color: #333;
+  font-size: 1.1rem;
+}
+
+.generationSelect {
+  padding: 0.75rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: white;
+  transition: border-color 0.3s;
+  min-width: 200px;
+}
+
+.generationSelect:hover {
+  border-color: #007bff;
+}
+
+.generationSelect:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .typeFilters {
+  margin-bottom: 0;
+}
+
+.typeFilters h3 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.typeButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .typeButton {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s;
   color: white;
   font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
 .typeButton:hover {
-  opacity: 0.8;
+  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .typeButton.active {
   border-color: #333;
   box-shadow: 0 0 0 2px white, 0 0 0 4px #333;
+  transform: translateY(-2px);
 }
 
-.results {
+.resultsInfo {
   color: #666;
   margin-bottom: 1.5rem;
   font-weight: 500;
+  font-size: 1rem;
 }
 
-.gallery {
+.resultsInfo p {
+  margin: 0;
+}
+
+.galleryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.card {
+.galleryItem {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
-.card:hover {
+.galleryItem:hover {
   transform: translateY(-8px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.imageContainer {
+.galleryItem img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
   background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
   padding: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
+  display: block;
 }
 
-.imageContainer img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.cardInfo {
+.galleryInfo {
   padding: 1rem;
   text-align: center;
 }
 
-.id {
+.pokemonId {
   color: #999;
   font-size: 0.9rem;
   font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-.cardInfo h3 {
-  margin: 0.5rem 0;
+.pokemonName {
   text-transform: capitalize;
   color: #333;
   font-size: 1.1rem;
-}
-
-.types {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.type {
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
-  color: white;
+  display: block;
+}
+
+.noResults {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #666;
+  grid-column: 1 / -1;
+  font-size: 1.1rem;
 }
 
 .loading {
   text-align: center;
-  padding: 4rem;
-  font-size: 1.2rem;
+  padding: 4rem 2rem;
+  font-size: 1.3rem;
   color: #666;
+  font-weight: 500;
 }
 
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 32px 0;
+  flex-wrap: wrap;
+}
+
+.paginationButton {
+  padding: 10px 16px;
+  border: 2px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  min-width: 44px;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.paginationButton.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.paginationButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+.paginationEllipsis {
+  padding: 10px 8px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Type colors */
 .normal { background-color: #A8A878; }
 .fire { background-color: #F08030; }
 .water { background-color: #6890F0; }
-.electric { background-color: #F8D030; }
+.electric { background-color: #F8D030; color: #333; }
 .grass { background-color: #78C850; }
 .ice { background-color: #98D8D8; }
 .fighting { background-color: #C03028; }
@@ -146,3 +239,44 @@
 .dark { background-color: #705848; }
 .steel { background-color: #B8B8D0; }
 .fairy { background-color: #EE99AC; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .container h1 {
+    font-size: 2rem;
+  }
+
+  .galleryGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .typeButtons {
+    gap: 0.4rem;
+  }
+
+  .typeButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .paginationButton {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-width: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .galleryGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .generationSelect {
+    width: 100%;
+  }
+}

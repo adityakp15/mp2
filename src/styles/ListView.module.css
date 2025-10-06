@@ -1,28 +1,36 @@
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
   padding: 2rem;
+  background-color: #f0f0f0;
 }
 
 .container h1 {
-  text-align: center;
+  text-align: left;
   color: #333;
   margin-bottom: 2rem;
+  font-size: 2rem;
 }
 
 .controls {
   display: flex;
-  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .searchBar {
-  padding: 0.75rem;
-  font-size: 1rem;
+  flex: 1;
+  min-width: 250px;
+  padding: 0.75rem 1rem;
   border: 2px solid #ddd;
   border-radius: 8px;
-  width: 100%;
+  font-size: 1rem;
+}
+
+.searchBar:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 .sortControls {
@@ -35,13 +43,21 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #333;
+  font-weight: 500;
 }
 
 .sortControls select {
   padding: 0.5rem;
   border: 2px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.sortControls select:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 .results {
@@ -51,53 +67,60 @@
 }
 
 .list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
 .listItem {
   display: flex;
   align-items: center;
-  padding: 1rem;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .listItem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sprite {
   width: 80px;
   height: 80px;
-  margin-right: 1rem;
+  object-fit: contain;
+  margin-right: 1.5rem;
+}
+
+.info {
+  flex: 1;
 }
 
 .info h3 {
   color: #999;
-  margin: 0 0 0.25rem 0;
   font-size: 0.9rem;
+  margin: 0 0 0.25rem 0;
 }
 
 .info h2 {
-  margin: 0 0 0.5rem 0;
-  text-transform: capitalize;
   color: #333;
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
 }
 
 .types {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .type {
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   color: white;
@@ -110,11 +133,57 @@
   color: #666;
 }
 
-/* Pokemon type colors */
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  margin: 32px 0;
+  flex-wrap: wrap;
+}
+
+.paginationButton {
+  padding: 10px 16px;
+  border: 2px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  min-width: 44px;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #007bff;
+}
+
+.paginationButton.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.paginationButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+.paginationEllipsis {
+  padding: 10px 8px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Type colors */
 .normal { background-color: #A8A878; }
 .fire { background-color: #F08030; }
 .water { background-color: #6890F0; }
-.electric { background-color: #F8D030; }
+.electric { background-color: #F8D030; color: #333; }
 .grass { background-color: #78C850; }
 .ice { background-color: #98D8D8; }
 .fighting { background-color: #C03028; }
@@ -129,3 +198,24 @@
 .dark { background-color: #705848; }
 .steel { background-color: #B8B8D0; }
 .fairy { background-color: #EE99AC; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .listItem {
+    padding: 0.75rem;
+  }
+
+  .sprite {
+    width: 60px;
+    height: 60px;
+    margin-right: 1rem;
+  }
+
+  .info h2 {
+    font-size: 1.1rem;
+  }
+}

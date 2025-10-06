@@ -13,10 +13,14 @@ const ListView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(70);
+
   useEffect(() => {
     const loadPokemons = async () => {
       try {
-        const data = await fetchAllPokemonDetails(151);
+        const data = await fetchAllPokemonDetails(1025);
         setPokemons(data);
         setFilteredPokemons(data);
         setLoading(false);
@@ -44,10 +48,72 @@ const ListView: React.FC = () => {
     });
 
     setFilteredPokemons(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
   }, [searchQuery, sortBy, sortOrder, pokemons]);
 
   const handlePokemonClick = (id: number) => {
     navigate(`/pokemon/${id}`, { state: { pokemons: filteredPokemons } });
+  };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPokemons.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredPokemons.length / itemsPerPage);
+
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        pageNumbers.push(currentPage - 1);
+        pageNumbers.push(currentPage);
+        pageNumbers.push(currentPage + 1);
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
   };
 
   if (loading) {
@@ -87,11 +153,11 @@ const ListView: React.FC = () => {
       </div>
 
       <div className={styles.results}>
-        Found {filteredPokemons.length} Pokémon
+        Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredPokemons.length)} of {filteredPokemons.length} Pokémon
       </div>
 
       <div className={styles.list}>
-        {filteredPokemons.map((pokemon) => (
+        {currentItems.map((pokemon) => (
           <div
             key={pokemon.id}
             className={styles.listItem}
@@ -116,6 +182,41 @@ const ListView: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {filteredPokemons.length > itemsPerPage && (
+        <div className={styles.pagination}>
+          <button 
+            onClick={goToPrevPage} 
+            disabled={currentPage === 1}
+            className={styles.paginationButton}
+          >
+            Previous
+          </button>
+
+          {getPageNumbers().map((pageNum, index) => (
+            pageNum === '...' ? (
+              <span key={`ellipsis-${index}`} className={styles.paginationEllipsis}>...</span>
+            ) : (
+              <button
+                key={pageNum}
+                onClick={() => goToPage(pageNum as number)}
+                className={`${styles.paginationButton} ${currentPage === pageNum ? styles.active : ''}`}
+              >
+                {pageNum}
+              </button>
+            )
+          ))}
+
+          <button 
+            onClick={goToNextPage} 
+            disabled={currentPage === totalPages}
+            className={styles.paginationButton}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
