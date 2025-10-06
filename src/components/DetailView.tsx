@@ -35,7 +35,7 @@ const DetailView: React.FC = () => {
       }
     };
     loadPokemon();
-  }, [id]);
+  }, [id, pokemonList]);
 
   const handlePrevious = () => {
     if (pokemonList.length > 0 && currentIndex > 0) {
